@@ -9,128 +9,102 @@ Built for the cohort-admin + post-webinar Q&A firehose — certificate questions
 requests, slide/recording requests, billing changes, scheduling — while always
 surfacing sales opportunities and anything sensitive for a human.
 
-## Getting started on a Mac (no coding experience needed)
+## Setup on a Mac
 
-This walks you through it from scratch. You'll copy-paste a few commands into a Mac
-app called **Terminal**. Take it one step at a time — you don't need to understand the
-commands, just run them in order. The whole thing takes about 15–20 minutes the first
-time, and about 20 seconds every time after.
+You'll run a handful of commands in **Terminal** (⌘+Space, type `Terminal`, Return). The
+first run takes ~15 minutes; after that the app starts in seconds. It runs locally in your
+browser at `http://localhost:5180` — nothing is exposed to the internet, and it only runs
+while the Terminal window stays open.
 
-> **What you'll end up with:** the app running in your web browser at a local address
-> (`http://localhost:5180`). It only runs while you leave the Terminal window open — it
-> is not on the internet, just on your Mac.
+### 1. Install the tools
 
-### Step 1 — Open the Terminal
-
-Press **⌘ (Command) + Space** to open Spotlight search, type **`Terminal`**, and press
-**Return**. A window with a blinking cursor opens. That's where everything below goes.
-
-> **How to run a command:** copy a command from this page, click in the Terminal window,
-> paste with **⌘V**, and press **Return**. When you paste a multi-line block, run it as
-> one piece.
-
-### Step 2 — Install Homebrew (the thing that installs everything else)
-
-Homebrew is a free tool that installs other software cleanly. Paste this and press Return:
+If you don't already have **Homebrew**, install it (it'll ask for your Mac password — it
+stays invisible as you type):
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-- It will ask for your **Mac login password**. Type it and press Return. *The password
-  stays invisible as you type — that's normal, just keep typing.*
-- It may ask you to press Return again to continue. Do so.
-- This step takes a few minutes.
-
-When it finishes, it prints a short **"Next steps"** box with two lines to run (they
-start with `echo` and `eval`). **Copy-paste and run those two lines.** If you can't find
-them, run this one line instead — it does the same thing:
+When it finishes it prints two `Next steps` lines (`echo …` / `eval …`) — run them so your
+shell can find `brew`. If you miss them, this one-liner does the same:
 
 ```bash
 eval "$(/opt/homebrew/bin/brew shellenv)" && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 ```
 
-Check it worked by running `brew --version` — you should see a version number, not an
-error.
-
-### Step 3 — Install Python, Node, and Git
-
-These are the three building blocks the app needs. One command installs all of them:
+Then install Python, Node, and Git:
 
 ```bash
 brew install python node git
 ```
 
-This takes a few minutes. When it's done you're past the hard part.
+### 2. Get the project
 
-### Step 4 — Get the project onto your Mac
-
-Jean-Baptiste will get you the project files one of two ways:
-
-- **He sends you a folder** (AirDrop or a `.zip` file). If it's a zip, double-click it to
-  unzip, then drag the unzipped folder into your **Home** folder (the one with your name
-  in Finder).
-- **He adds you on GitHub.** Then you can download it by running:
-  ```bash
-  cd ~ && git clone https://github.com/thrive-incubator/email_automation.git
-  ```
-  (If it asks you to sign in to GitHub, follow the prompts — you only do this once.)
-
-### Step 5 — Go into the project folder
-
-In Terminal, type `cd ` (the letters c, d, then a space), then **drag the project folder
-from Finder onto the Terminal window** — it pastes the location for you — and press Return:
+Jean-Baptiste will add you on GitHub or send you the folder. With GitHub access:
 
 ```bash
-cd    ← type this, then drag the folder here, then press Return
+cd ~ && git clone https://github.com/thrive-incubator/email_automation.git
 ```
 
-You're in the right place if running `ls` shows a file called `run-local.sh`.
+(If he sent a zip, unzip it and move the folder into your Home folder instead.)
 
-### Step 6 — Start the app
+### 3. Start it
 
 ```bash
+cd ~/email_automation     # if it's elsewhere: type `cd `, drag the folder onto Terminal, Return
 bash run-local.sh
 ```
 
-The **first run is slow** (a minute or two) because it's setting everything up — that's
-expected. It's ready when you see lines mentioning the backend and frontend starting and
-the window stops scrolling.
+The first run is slow (a minute or two) while it builds; it's ready when the output
+settles. Then open **<http://localhost:5180>** and click **📥 Check new emails**.
 
-### Step 7 — Open it in your browser
+It starts in **demo mode** with a sample inbox, so you can explore everything with no keys.
+To use real AI and your actual Gmail, do the next section.
 
-Go to **<http://localhost:5180>** in Safari or Chrome, and click **📥 Check new emails**.
+**Stop:** Control + C (or close the window). **Restart later:** `cd` back into the folder
+and run `bash run-local.sh` again.
 
-Out of the box the app runs in **demo mode** with a sample inbox, so you can click around
-the whole thing with nothing else to set up. To connect real AI + your real Gmail, see
-[Going live](#going-live) below (Jean-Baptiste can help with the keys).
+## Connecting real AI + your Gmail
 
-### Stopping and restarting
+Open the settings file from inside the project folder (opens in TextEdit):
 
-- **To stop the app:** click the Terminal window and press **Control + C**. You can also
-  just close the Terminal window.
-- **To start it again next time:** open Terminal, run the `cd` step (Step 5) to get back
-  into the folder, then run `bash run-local.sh` again. After the first time it starts in
-  seconds.
+```bash
+open -e backend/.env
+```
+
+Set these four values, then **save with ⌘S** and close:
+
+```env
+GEMINI_API_KEY=        # ← Jean-Baptiste gives you this
+ANTHROPIC_API_KEY=     # ← and this
+EMAIL_PROVIDER=gmail   # ← change "mock" to "gmail"
+GMAIL_SENDER=          # ← your own email address
+```
+
+**Leave every other line as-is** (the model names, file paths, `DATABASE_URL`, etc.).
+
+You also need one file from Jean-Baptiste: **`client_secret.json`** (the Google sign-in
+credential). Drop it into the project at **`backend/data/client_secret.json`**. You do
+**not** create a token file yourself — `gmail_token.json` is generated automatically the
+first time you connect.
+
+Now restart the app (Control + C, then `bash run-local.sh`), open the **Settings** page,
+and click **Connect Gmail** — a Google sign-in opens in your browser; approve it and
+you're connected. Hit **Settings → Test connections** to confirm both AI keys and Gmail
+report OK.
 
 ### If something goes wrong
 
-- **"command not found: brew"** — the Step 2 "Next steps" lines didn't run. Run the
-  single fallback line in Step 2, then continue.
-- **A command seems stuck** — many steps just take a few minutes. Give it time before
-  assuming it failed.
-- **The browser page won't load** — make sure the Terminal running `bash run-local.sh` is
-  still open and finished starting up. If you closed it, start it again (Step 6).
-- **Anything else** — copy the red error text from Terminal and send it to
-  Jean-Baptiste; that's exactly what he needs to help.
+- **`command not found: brew`** — the `Next steps` lines from step 1 didn't run. Run the
+  one-liner fallback, then continue.
+- **Browser page won't load** — the Terminal running `bash run-local.sh` must stay open and
+  finished starting. If you closed it, start it again.
+- **Anything else** — copy the red error text from Terminal and send it over; that's what's
+  needed to help.
 
----
-
-> **Already a developer?** The whole setup is just `./run-local.sh` from the repo root
-> (it frees ports `:8008`/`:5180`, builds the venv, installs deps, and copies
-> `.env.example` → `.env`). Then open <http://localhost:5180>. `EMAIL_PROVIDER=mock`
-> serves a seeded inbox and deterministic stand-in models run with **zero setup** — drop
-> in real models + Gmail when ready (see [Going live](#going-live)).
+> **Already set up for dev?** It's just `./run-local.sh` from the repo root (frees ports
+> `:8008`/`:5180`, builds the venv, installs deps, copies `.env.example` → `.env`), then
+> <http://localhost:5180>. `EMAIL_PROVIDER=mock` serves a seeded inbox with zero setup.
 
 ## How it works
 
@@ -210,42 +184,40 @@ Rules live in `backend/rules.json` (also editable from the **Rules** tab). Schem
 | `crm_handoff` | POST to `CRM_WEBHOOK_URL` or append to `data/crm_outbox.jsonl` | optional label applied |
 | `exclude` | Auto-final on classify — **no Gmail call, no LLM call** | untouched in inbox (Shai's "skip entirely" intent) |
 
-## Going live
+## Admin reference
 
-The settings live in a file called `backend/.env`. To open it for editing, run this in
-Terminal from the project folder (it opens in TextEdit):
+End-user setup is covered above. This section is for whoever administers the keys and the
+Google project (Jean-Baptiste).
 
-```bash
-open -e backend/.env
-```
+### All `.env` settings
 
-Fill in the values below, then **save with ⌘S** and close TextEdit:
+| key | what it is |
+|---|---|
+| `GEMINI_API_KEY` | Gemini (filtering/classification) key |
+| `GEMINI_MODEL` | default `gemini-3.1-flash-lite`; confirm the exact id via **Settings → Test connections** |
+| `ANTHROPIC_API_KEY` | Claude (answering/drafting) key |
+| `ANTHROPIC_MODEL` | default `claude-sonnet-4-6` |
+| `EMAIL_PROVIDER` | `mock` (seeded demo inbox) or `gmail` (real) |
+| `GMAIL_CLIENT_SECRET_FILE` | path to the OAuth client JSON; default `./data/client_secret.json` |
+| `GMAIL_TOKEN_FILE` | **auto-written on Connect**; don't create by hand |
+| `GMAIL_SENDER` | the address replies are sent "from" (the user's email) |
+| `CRM_WEBHOOK_URL` | optional; blank writes `crm_handoff` actions to `data/crm_outbox.jsonl` |
+| `DATABASE_URL` / `FRONTEND_ORIGIN` | leave as-is for local use |
 
-```env
-GEMINI_API_KEY=...          # the AI key Jean-Baptiste gives you
-ANTHROPIC_API_KEY=...       # the second AI key
-EMAIL_PROVIDER=gmail        # switches from the demo inbox to your real Gmail
-CRM_WEBHOOK_URL=...          # optional; leave blank unless told otherwise
-```
+### Creating the Gmail OAuth client (one-time, admin)
 
-After saving, stop the app (**Control + C**) and start it again (`bash run-local.sh`) so
-it picks up the new settings.
-
-> **Model IDs are configurable.** Hit **Settings → Test connections** in the app to
-> confirm your keys + model IDs actually work — it pings each provider and tells you what
-> passed.
-
-### Gmail (test-mode OAuth)
+The `client_secret.json` you hand to each user comes from here:
 
 1. Google Cloud Console → new project → enable the **Gmail API**.
-2. OAuth consent screen → **External** → add yourself as a **Test user**.
+2. OAuth consent screen → **External** → add each end user as a **Test user**.
 3. Credentials → **Create OAuth client ID** → add redirect URI
    `http://localhost:8008/api/auth/gmail/callback` → download the JSON.
-4. Save it to `backend/data/client_secret.json`.
-5. Set `EMAIL_PROVIDER=gmail`, restart, and click **Connect Gmail** on Settings.
+4. That downloaded JSON is the `client_secret.json` the user saves to
+   `backend/data/client_secret.json`.
 
-Scopes requested: `gmail.modify` + `gmail.send` (read, label, draft, send). Replies
-go **in-thread** with proper `In-Reply-To` headers.
+When the user clicks **Connect Gmail**, the OAuth flow writes `data/gmail_token.json`
+automatically. Scopes requested: `gmail.modify` + `gmail.send` (read, label, draft, send).
+Replies go **in-thread** with proper `In-Reply-To` headers.
 
 ### "Waiting on me" filter
 
