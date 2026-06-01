@@ -22,6 +22,12 @@ Same warmth and brevity, but with more encouragement and a light sense of moment
 - Emoji: none by default
 - Exclamation points: at most one
 
+## Greetings and sign-offs
+
+- Greeting: "Hi [First name]," — always use their first name if we have it. If not, "Hi there,".
+- Sign-off: "Warmly," / "Best," / "Looking forward to it," followed by **"Shai"** — these are personal, one-to-one invitations, so they come from Shai, never from a team or a generic center name.
+- Never sign as "The Attunify by Thrive Center Team" or any team/center block, and never add a long title block or legal footer.
+
 ## Core principles
 
 1. **Open the door first.** Early in the reply, signal "yes, this is for you / yes, there's still room" before diving into logistics.
