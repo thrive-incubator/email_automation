@@ -72,11 +72,17 @@ Open the settings file from inside the project folder (opens in TextEdit):
 open -e backend/.env
 ```
 
+You'll need two API keys (each takes a couple of minutes to create):
+
+- **Gemini** — sign in at <https://aistudio.google.com/apikey> and click *Create API key*.
+- **Anthropic** — sign in at <https://console.anthropic.com/settings/keys> and create a key.
+  (This one requires adding billing credit to your account.)
+
 Set these four values, then **save with ⌘S** and close:
 
 ```env
-GEMINI_API_KEY=        # ← Jean-Baptiste gives you this
-ANTHROPIC_API_KEY=     # ← and this
+GEMINI_API_KEY=        # ← your Gemini key
+ANTHROPIC_API_KEY=     # ← your Anthropic key
 EMAIL_PROVIDER=gmail   # ← change "mock" to "gmail"
 GMAIL_SENDER=          # ← your own email address
 ```
@@ -278,13 +284,12 @@ email_automation/
 │   ├── skills/humanizer/SKILL.md   # vendored from autopilot-thrive
 │   ├── rules.json
 │   └── tests/  unit/ · integration/ · api/ · regression/
-├── frontend/
-│   ├── src/
-│   │   ├── App.tsx · main.tsx · types.ts
-│   │   ├── api/client.ts
-│   │   ├── components/  Badges · DecisionCard
-│   │   ├── pages/  Review · Rules · Brain · Settings
-│   │   └── __tests__/   (vitest + React Testing Library)
-│   └── package.json · vite.config.ts
-└── triage-system/               # Shai's source-of-truth rules + brain (handoff)
+└── frontend/
+    ├── src/
+    │   ├── App.tsx · main.tsx · types.ts
+    │   ├── api/client.ts
+    │   ├── components/  Badges · DecisionCard
+    │   ├── pages/  Review · Rules · Brain · Settings
+    │   └── __tests__/   (vitest + React Testing Library)
+    └── package.json · vite.config.ts
 ```
