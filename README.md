@@ -9,18 +9,128 @@ Built for the cohort-admin + post-webinar Q&A firehose — certificate questions
 requests, slide/recording requests, billing changes, scheduling — while always
 surfacing sales opportunities and anything sensitive for a human.
 
-## Quick start
+## Getting started on a Mac (no coding experience needed)
+
+This walks you through it from scratch. You'll copy-paste a few commands into a Mac
+app called **Terminal**. Take it one step at a time — you don't need to understand the
+commands, just run them in order. The whole thing takes about 15–20 minutes the first
+time, and about 20 seconds every time after.
+
+> **What you'll end up with:** the app running in your web browser at a local address
+> (`http://localhost:5180`). It only runs while you leave the Terminal window open — it
+> is not on the internet, just on your Mac.
+
+### Step 1 — Open the Terminal
+
+Press **⌘ (Command) + Space** to open Spotlight search, type **`Terminal`**, and press
+**Return**. A window with a blinking cursor opens. That's where everything below goes.
+
+> **How to run a command:** copy a command from this page, click in the Terminal window,
+> paste with **⌘V**, and press **Return**. When you paste a multi-line block, run it as
+> one piece.
+
+### Step 2 — Install Homebrew (the thing that installs everything else)
+
+Homebrew is a free tool that installs other software cleanly. Paste this and press Return:
 
 ```bash
-./run-local.sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Open <http://localhost:5180> and click **📥 Check new emails**.
+- It will ask for your **Mac login password**. Type it and press Return. *The password
+  stays invisible as you type — that's normal, just keep typing.*
+- It may ask you to press Return again to continue. Do so.
+- This step takes a few minutes.
 
-Out of the box `EMAIL_PROVIDER=mock` serves a seeded sample inbox. If you haven't set
-`ANTHROPIC_API_KEY` and `GEMINI_API_KEY` yet, deterministic mock models stand in, so
-the whole UI is testable with **zero setup**. Drop in real models + Gmail when ready
-(see [Going live](#going-live)).
+When it finishes, it prints a short **"Next steps"** box with two lines to run (they
+start with `echo` and `eval`). **Copy-paste and run those two lines.** If you can't find
+them, run this one line instead — it does the same thing:
+
+```bash
+eval "$(/opt/homebrew/bin/brew shellenv)" && echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+```
+
+Check it worked by running `brew --version` — you should see a version number, not an
+error.
+
+### Step 3 — Install Python, Node, and Git
+
+These are the three building blocks the app needs. One command installs all of them:
+
+```bash
+brew install python node git
+```
+
+This takes a few minutes. When it's done you're past the hard part.
+
+### Step 4 — Get the project onto your Mac
+
+Jean-Baptiste will get you the project files one of two ways:
+
+- **He sends you a folder** (AirDrop or a `.zip` file). If it's a zip, double-click it to
+  unzip, then drag the unzipped folder into your **Home** folder (the one with your name
+  in Finder).
+- **He adds you on GitHub.** Then you can download it by running:
+  ```bash
+  cd ~ && git clone https://github.com/thrive-incubator/email_automation.git
+  ```
+  (If it asks you to sign in to GitHub, follow the prompts — you only do this once.)
+
+### Step 5 — Go into the project folder
+
+In Terminal, type `cd ` (the letters c, d, then a space), then **drag the project folder
+from Finder onto the Terminal window** — it pastes the location for you — and press Return:
+
+```bash
+cd    ← type this, then drag the folder here, then press Return
+```
+
+You're in the right place if running `ls` shows a file called `run-local.sh`.
+
+### Step 6 — Start the app
+
+```bash
+bash run-local.sh
+```
+
+The **first run is slow** (a minute or two) because it's setting everything up — that's
+expected. It's ready when you see lines mentioning the backend and frontend starting and
+the window stops scrolling.
+
+### Step 7 — Open it in your browser
+
+Go to **<http://localhost:5180>** in Safari or Chrome, and click **📥 Check new emails**.
+
+Out of the box the app runs in **demo mode** with a sample inbox, so you can click around
+the whole thing with nothing else to set up. To connect real AI + your real Gmail, see
+[Going live](#going-live) below (Jean-Baptiste can help with the keys).
+
+### Stopping and restarting
+
+- **To stop the app:** click the Terminal window and press **Control + C**. You can also
+  just close the Terminal window.
+- **To start it again next time:** open Terminal, run the `cd` step (Step 5) to get back
+  into the folder, then run `bash run-local.sh` again. After the first time it starts in
+  seconds.
+
+### If something goes wrong
+
+- **"command not found: brew"** — the Step 2 "Next steps" lines didn't run. Run the
+  single fallback line in Step 2, then continue.
+- **A command seems stuck** — many steps just take a few minutes. Give it time before
+  assuming it failed.
+- **The browser page won't load** — make sure the Terminal running `bash run-local.sh` is
+  still open and finished starting up. If you closed it, start it again (Step 6).
+- **Anything else** — copy the red error text from Terminal and send it to
+  Jean-Baptiste; that's exactly what he needs to help.
+
+---
+
+> **Already a developer?** The whole setup is just `./run-local.sh` from the repo root
+> (it frees ports `:8008`/`:5180`, builds the venv, installs deps, and copies
+> `.env.example` → `.env`). Then open <http://localhost:5180>. `EMAIL_PROVIDER=mock`
+> serves a seeded inbox and deterministic stand-in models run with **zero setup** — drop
+> in real models + Gmail when ready (see [Going live](#going-live)).
 
 ## How it works
 
@@ -102,17 +212,28 @@ Rules live in `backend/rules.json` (also editable from the **Rules** tab). Schem
 
 ## Going live
 
-Edit `backend/.env`:
+The settings live in a file called `backend/.env`. To open it for editing, run this in
+Terminal from the project folder (it opens in TextEdit):
 
-```env
-GEMINI_API_KEY=...
-ANTHROPIC_API_KEY=...
-EMAIL_PROVIDER=gmail
-CRM_WEBHOOK_URL=...   # optional; defaults to data/crm_outbox.jsonl
+```bash
+open -e backend/.env
 ```
 
-> **Model IDs are configurable.** Hit **Settings → Test connections** to confirm
-> your keys + model IDs actually work — it pings each provider.
+Fill in the values below, then **save with ⌘S** and close TextEdit:
+
+```env
+GEMINI_API_KEY=...          # the AI key Jean-Baptiste gives you
+ANTHROPIC_API_KEY=...       # the second AI key
+EMAIL_PROVIDER=gmail        # switches from the demo inbox to your real Gmail
+CRM_WEBHOOK_URL=...          # optional; leave blank unless told otherwise
+```
+
+After saving, stop the app (**Control + C**) and start it again (`bash run-local.sh`) so
+it picks up the new settings.
+
+> **Model IDs are configurable.** Hit **Settings → Test connections** in the app to
+> confirm your keys + model IDs actually work — it pings each provider and tells you what
+> passed.
 
 ### Gmail (test-mode OAuth)
 
